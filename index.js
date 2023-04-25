@@ -4,6 +4,7 @@ const port = 4000;
 const bodyParser = require('body-parser')
 const { User } = require('./models/User')
 const cors = require('cors')
+const config = require('./config/key')
 
 //application/x-www-form-urlencoded
 app.use(bodyParser.urlencoded({extended: true}))
@@ -14,7 +15,7 @@ app.use(cors())
 
 //connect DB 
 const mongoose = require('mongoose')
-mongoose.connect('mongodb+srv://yanghj:1234qwer@cluster0.e60n8x4.mongodb.net/?retryWrites=true&w=majority', {
+mongoose.connect(config.mongoURI, {
   useNewUrlParser: true, useUnifiedTopology: true
 }).then(() => console.log('MongoDB Connected...'))
   .catch(err => console.log(err))
