@@ -73,7 +73,7 @@ userSchema.methods.generateToken = function (cb) {
 }
 
 //권한 확인
-userSchema.static.findByToken = function (token, cb) {
+userSchema.statics.findByToken = function (token, cb) {
     let user = this;
 
     //토큰 decode

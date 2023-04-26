@@ -14,10 +14,6 @@ let auth = (req, res, next) => {
         req.user = user
         next()
     })
-
-    //유저가 있으면 인증OK
-
-    //유저가 없으면 인증NO
 }
 
 module.exports = { auth };
