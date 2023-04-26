@@ -6,6 +6,7 @@ const cookieParser = require('cookie-parser')
 const { User } = require('./models/User')
 const cors = require('cors')
 const config = require('./config/key')
+const { auth } = require('./middleware/auth')
 
 //application/x-www-form-urlencoded
 app.use(bodyParser.urlencoded({ extended: true }))
@@ -26,7 +27,7 @@ app.get('/', function (req, res) {
   res.send('Hello World')
 });
 
-app.post('/register', async (req, res) => {
+app.post('/api/users/register', async (req, res) => {
   const user = new User(req.body)
   const result = await user.save().then(() => {
     res.status(200).json({
@@ -37,7 +38,7 @@ app.post('/register', async (req, res) => {
   })
 })
 
-app.post('/login', (req, res) => {
+app.post('/api/users/login', (req, res) => {
   //요청된 이메일을 데이터베이스에서 찾기
   User.findOne({ email: req.body.email })
     .then(docs => {
@@ -58,13 +59,27 @@ app.post('/login', (req, res) => {
           if (err) return res.status(400).send(err)
           //토큰을 쿠키에 저장
           res.cookie('x_auth', user.token).status(200)
-          .json({
-            loginSuccess: true,
-            userId: user._id
-          })
+            .json({
+              loginSuccess: true,
+              userId: user._id
+            })
         })
       })
     })
+})
+
+app.get('/api/users/auth', auth, (req, res) => {
+  //middleware인 auth 통과시
+  res.status(200).json({
+    _id : req.user._id,
+    isAdmin : req.user.role === 0 ? false : true,
+    isAuth : true,
+    name : req.user.name,
+    email : req.user.email,
+    lastname : req.user.lastname,
+    role : req.user.role,
+    image : req.user.image
+  })
 })
 
 app.listen(port, function () {
